@@ -46,10 +46,9 @@ def on_message(mqttc, obj, msg):
     try:
         x = json.loads(msg.payload.decode('utf-8'))
         device = str(x["dev_id"])
-        payload = int(base64.b64decode(x["payload_raw"])) #assume payload is the value of a sensor
-        datetime = int(time.mktime(dateutil.parser.parse(x["metadata"]["time"]).timetuple())) #transform to Unix epoch format
+        payload = float(base64.b64decode(x["payload_raw"])) #assume payload is the value of a sensor
 
-        cursor.execute("""INSERT INTO test VALUES (%s, %s, %s)""", (device, datetime, payload))
+        cursor.execute("""INSERT INTO test VALUES (%s, NOW(), %s)""", (device, payload))
         db.commit()
     except Exception as e:
         print(e)
